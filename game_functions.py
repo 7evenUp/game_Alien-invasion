@@ -2,34 +2,62 @@ import sys
 
 import pygame
 
-def check_keydown_events(event, ship):
+from bullet import Bullet
+
+def fire_bullets(ai_settings, screen, ship, bullets):
+  if len(bullets) < ai_settings.bullets_allowed:
+    new_bullet = Bullet(ai_settings, screen, ship)
+    bullets.add(new_bullet)
+
+def check_keydown_events(event, ai_settings, screen, ship, bullets):
   """Реагирует на нажатие клавиш"""
-  if event.key == pygame.K_LEFT:
-    ship.moving_left = True
+  if event.key == pygame.K_UP:
+    ship.moving_up = True
   elif event.key == pygame.K_RIGHT:
     ship.moving_right = True
+  elif event.key == pygame.K_DOWN:
+    ship.moving_down = True
+  elif event.key == pygame.K_LEFT:
+    ship.moving_left = True
+  elif event.key == pygame.K_SPACE:
+    fire_bullets(ai_settings, screen, ship, bullets)
 
 def check_keyup_events(event, ship):
   """Реагирует на отпускание клавиш"""
-  if event.key == pygame.K_LEFT:
-    ship.moving_left = False
+  if event.key == pygame.K_UP:
+    ship.moving_up = False
   elif event.key == pygame.K_RIGHT:
     ship.moving_right = False
+  elif event.key == pygame.K_DOWN:
+    ship.moving_down = False
+  elif event.key == pygame.K_LEFT:
+    ship.moving_left = False
 
-def check_events(ship):
+def check_events(ai_settings, screen, ship, bullets):
   """Обрабатывает нажатия клавиш и события мыши"""
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
       sys.exit()
     elif event.type == pygame.KEYDOWN:
-      check_keydown_events(event, ship)
+      check_keydown_events(event, ai_settings, screen, ship, bullets)
     elif event.type == pygame.KEYUP:
       check_keyup_events(event, ship)
 
-def update_screen(ai_settings, screen, ship):
+def update_bullets(bullets):
+  """Обновляет позиции пуль и уничтожает старые"""
+  #Обновление
+  bullets.update()
+  #Удаление
+  for bullet in bullets.copy():
+    if bullet.rect.bottom <= 3:
+      bullets.remove(bullet)
+
+def update_screen(ai_settings, screen, ship, bullets):
   """Обновляет изображения на кэране и отображает новый экран."""
   # При каждом проходе цикла перерисовывается экран.
   screen.fill(ai_settings.bg_color)
+  for bullet in bullets.sprites():
+    bullet.draw_bullet()
   ship.blitme()
 
   # Отображение последнего прорисованного экрана.
