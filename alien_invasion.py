@@ -18,7 +18,7 @@ def run_game():
   bullets = Group()
   #Создание пришельца
   aliens = Group()
-  gf.create_fleet(ai_settings, screen, aliens)
+  gf.create_fleet(ai_settings, screen, ship, aliens)
 
   #Запуск основного цикла игры
   while True:
