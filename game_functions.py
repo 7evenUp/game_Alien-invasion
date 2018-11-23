@@ -46,7 +46,7 @@ def check_events(ai_settings, screen, ship, bullets):
     elif event.type == pygame.KEYUP:
       check_keyup_events(event, ship)
 
-def update_bullets(bullets):
+def update_bullets(aliens, bullets):
   """Обновляет позиции пуль и уничтожает старые"""
   #Обновление
   bullets.update()
@@ -54,6 +54,7 @@ def update_bullets(bullets):
   for bullet in bullets.copy():
     if bullet.rect.bottom <= 3:
       bullets.remove(bullet)
+  collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
 
 def get_number_aliens_x(ai_settings, alien_width):
   """Вычисляет кол-во пришельцев в ряду"""
