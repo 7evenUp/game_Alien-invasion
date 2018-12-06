@@ -13,7 +13,7 @@ def run_game():
   ai_settings = Settings()
   stats = GameStats(ai_settings)
   screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
-  play_button = Button(ai_settings, screen, "Play")
+  play_button = Button(ai_settings, screen, "Click or press \"P\" to play")
   pygame.display.set_caption('Alien Invasion')
 
   #Создание корабля

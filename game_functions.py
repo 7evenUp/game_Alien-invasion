@@ -11,7 +11,7 @@ def fire_bullets(ai_settings, screen, ship, bullets):
     new_bullet = Bullet(ai_settings, screen, ship)
     bullets.add(new_bullet)
 
-def check_keydown_events(event, ai_settings, screen, ship, bullets):
+def check_keydown_events(event, ai_settings, screen, stats, ship, aliens, bullets):
   """Реагирует на нажатие клавиш"""
   if event.key == pygame.K_UP:
     ship.moving_up = True
@@ -25,6 +25,8 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
     fire_bullets(ai_settings, screen, ship, bullets)
   elif event.key == pygame.K_q:
     sys.exit()
+  elif event.key == pygame.K_p and not stats.game_active:
+    start_game(ai_settings, screen, stats, ship, aliens, bullets)
 
 def check_keyup_events(event, ship):
   """Реагирует на отпускание клавиш"""
@@ -43,7 +45,7 @@ def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
     if event.type == pygame.QUIT:
       sys.exit()
     elif event.type == pygame.KEYDOWN:
-      check_keydown_events(event, ai_settings, screen, ship, bullets)
+      check_keydown_events(event, ai_settings, screen, stats, ship, aliens, bullets)
     elif event.type == pygame.KEYUP:
       check_keyup_events(event, ship)
     elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -53,17 +55,24 @@ def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
 def check_play_button(ai_settings, screen, stats, play_button, ship, aliens, bullets, mouse_x, mouse_y):
   button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
   if button_clicked and not stats.game_active:
-    #Сброс статистики
-    stats.reset_stats()
-    stats.game_active = True
+    start_game(ai_settings, screen, stats, ship, aliens, bullets)
 
-    #Очистка пришельцев и пуль
-    aliens.empty()
-    bullets.empty()
+def start_game(ai_settings, screen, stats, ship, aliens, bullets):
+  """Запускает процесс игры"""
+  #Убираем курсос
+  pygame.mouse.set_visible(False)
 
-    #Создание нового флота
-    create_fleet(ai_settings, screen, ship, aliens)
-    ship.center_ship()
+  #Сброс статистики
+  stats.reset_stats()
+  stats.game_active = True
+
+  #Очистка пришельцев и пуль
+  aliens.empty()
+  bullets.empty()
+
+  #Создание новой сцены
+  create_fleet(ai_settings, screen, ship, aliens)
+  ship.center_ship()
 
 def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
   collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
@@ -136,6 +145,7 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
     sleep(0.5)
   else:
     stats.game_active = False
+    pygame.mouse.set_visible(True)
 
 def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
   screen_rect = screen.get_rect()
