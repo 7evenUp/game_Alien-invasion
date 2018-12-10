@@ -62,6 +62,9 @@ def start_game(ai_settings, screen, stats, ship, aliens, bullets):
   #Убираем курсос
   pygame.mouse.set_visible(False)
 
+  #Сброс игровых настроек
+  ai_settings.initialize_dynamic_settings()
+
   #Сброс статистики
   stats.reset_stats()
   stats.game_active = True
@@ -78,6 +81,7 @@ def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
   collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
   if len(aliens) == 0:
     bullets.empty()
+    ai_settings.increase_speed()
     create_fleet(ai_settings, screen, ship, aliens)
 
 def update_bullets(ai_settings, screen, ship, aliens, bullets):
