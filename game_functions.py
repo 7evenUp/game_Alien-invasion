@@ -77,6 +77,11 @@ def start_game(ai_settings, screen, stats, ship, aliens, bullets):
   create_fleet(ai_settings, screen, ship, aliens)
   ship.center_ship()
 
+def check_high_score(stats, sb):
+  if stats.score > stats.high_score:
+    stats.high_score = stats.score
+    sb.prep_high_score()
+
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, bullets):
   collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
 
@@ -85,6 +90,7 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
     for aliens in collisions.values():
       stats.score += ai_settings.alien_points * len(aliens)
       sb.prep_score()
+      check_high_score(stats, sb)
 
   if len(aliens) == 0:
     bullets.empty()
